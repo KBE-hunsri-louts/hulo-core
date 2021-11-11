@@ -13,6 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>kbe</name>
 	<description>Submission project for KBE</description>
+
 	<properties>
 		<java.version>11</java.version>
 	</properties>
