@@ -1,12 +1,16 @@
-package controller;
+package com.huloteam.kbe.controller;
 
-import model.Product;
+import com.huloteam.kbe.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.ProductService;
+import com.huloteam.kbe.service.ProductService;
 
+/**
+ * Is the MVC-Controller. Which handles data transfer between view and com.huloteam.kbe.model.*
+ * @author Kevin Jagielski
+ */
 @RestController
 public class ProductServiceController {
 
@@ -39,4 +43,5 @@ public class ProductServiceController {
         productService.deleteProduct(id);
         return new ResponseEntity<>("Product is deleted successfully", HttpStatus.OK);
     }
+
 }

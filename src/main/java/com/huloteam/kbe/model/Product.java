@@ -1,15 +1,20 @@
-package model;
+package com.huloteam.kbe.model;
+
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Validation;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Objects;
 
 /**
  * Model class which contains information about a real product
  * @author Kevin Jagielski
  */
+@Entity("Product")
 public class Product {
 
+    @Id
     private long id; // change to GUID
     private String productName;
     private String description;
@@ -20,7 +25,6 @@ public class Product {
     private int amount;
     private int availableAmount;
     private int priceWithoutTax;
-    private int priceWithTax;
     private int providerPrice;
     private LocalDateTime storedSince;
 
@@ -63,10 +67,6 @@ public class Product {
 
     public int getPriceWithoutTax() {
         return priceWithoutTax;
-    }
-
-    public int getPriceWithTax() {
-        return priceWithTax;
     }
 
     public int getProviderPrice() {
@@ -114,10 +114,6 @@ public class Product {
         this.priceWithoutTax = priceWithoutTax;
     }
 
-    public void setPriceWithTax(int priceWithTax) {
-        this.priceWithTax = priceWithTax;
-    }
-
     public void setProviderPrice(int providerPrice) {
         this.providerPrice = providerPrice;
     }
@@ -136,12 +132,12 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return id == product.id && amount == product.amount && availableAmount == product.availableAmount && Double.compare(product.priceWithoutTax, priceWithoutTax) == 0 && Double.compare(product.priceWithTax, priceWithTax) == 0 && Double.compare(product.providerPrice, providerPrice) == 0 && Objects.equals(productName, product.productName) && Objects.equals(description, product.description) && Objects.equals(brand, product.brand) && Objects.equals(provider, product.provider) && Objects.equals(productTyp, product.productTyp) && Objects.equals(location, product.location) && Objects.equals(storedSince, product.storedSince);
+        return id == product.id && amount == product.amount && availableAmount == product.availableAmount && priceWithoutTax == product.priceWithoutTax && providerPrice == product.providerPrice && Objects.equals(productName, product.productName) && Objects.equals(description, product.description) && Objects.equals(brand, product.brand) && Objects.equals(provider, product.provider) && Objects.equals(productTyp, product.productTyp) && Objects.equals(location, product.location) && Objects.equals(storedSince, product.storedSince);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, productName, description, brand, provider, productTyp, location, amount, availableAmount, storedSince, priceWithoutTax, priceWithTax, providerPrice);
+        return Objects.hash(id, productName, description, brand, provider, productTyp, location, amount, availableAmount, priceWithoutTax, providerPrice, storedSince);
     }
 
     @Override
@@ -150,7 +146,6 @@ public class Product {
                 "id=" + id +
                 ", brand='" + brand + '\'' +
                 ", productName='" + productName + '\'' +
-                ", priceWithTax=" + priceWithTax +
                 ", priceWithoutTax=" + priceWithoutTax +
                 ", amount=" + amount +
                 ", availableAmount=" + availableAmount +
@@ -162,4 +157,5 @@ public class Product {
                 ", storedSince=" + storedSince +
                 '}';
     }
+
 }
