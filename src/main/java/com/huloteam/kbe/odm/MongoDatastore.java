@@ -17,11 +17,18 @@ public class MongoDatastore {
 
     private static Datastore datastore;
 
-    public MongoDatastore() {
-        Morphia morphia = new Morphia();
-        morphia.mapPackage("com.huloteam.kbe.model.product.class");
-        datastore = morphia.createDatastore(new MongoClient(), "productStorage");
-        datastore.ensureIndexes();
+    public MongoDatastore(boolean testDatabase) {
+        if (testDatabase) {
+            Morphia morphia = new Morphia();
+            morphia.mapPackage("com.huloteam.kbe.model.product.class");
+            datastore = morphia.createDatastore(new MongoClient(), "productStorageTest");
+            datastore.ensureIndexes();
+        } else {
+            Morphia morphia = new Morphia();
+            morphia.mapPackage("com.huloteam.kbe.model.product.class");
+            datastore = morphia.createDatastore(new MongoClient(), "productStorage");
+            datastore.ensureIndexes();
+        }
     }
 
     public void saveIntoMongo(Product product) {
@@ -36,7 +43,6 @@ public class MongoDatastore {
                 .toList();
     }
 
-    //TODO can only update integers
     public void updateIntoMongo(String category, String productCategoryToUpdate, String genreToBeUpdated, String updateInformation) {
         Query<Product> query = datastore.createQuery(Product.class)
                 .field(category)

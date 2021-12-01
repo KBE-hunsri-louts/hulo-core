@@ -2,10 +2,10 @@ package com.huloteam.kbe.model;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Validation;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Model class which contains information about a real product
@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Product {
 
     @Id
-    private long id; // change to GUID
+    private long id;
     private String productName;
     private String description;
     private String brand;
@@ -27,6 +27,19 @@ public class Product {
     private int priceWithoutTax;
     private int providerPrice;
     private LocalDateTime storedSince;
+
+    public static final String ID = "id";
+    public static final String PRODUCT_NAME = "productName";
+    public static final String DESCRIPTION = "description";
+    public static final String BRAND = "brand";
+    public static final String PROVIDER = "provider";
+    public static final String PRODUCT_TYP = "productTyp";
+    public static final String LOCATION = "location";
+    public static final String AMOUNT = "amount";
+    public static final String AVAILABLE_AMOUNT = "availableAmount";
+    public static final String PRICE_WITHOUT_TAX = "priceWithoutTax";
+    public static final String PROVIDER_PRICE = "providerPrice";
+    public static final String STORED_SINCE = "storedSince";
 
 
     public long getId() {
@@ -143,18 +156,18 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
-                ", brand='" + brand + '\'' +
-                ", productName='" + productName + '\'' +
-                ", priceWithoutTax=" + priceWithoutTax +
-                ", amount=" + amount +
-                ", availableAmount=" + availableAmount +
-                ", productTyp='" + productTyp + '\'' +
-                ", description='" + description + '\'' +
-                ", provider='" + provider + '\'' +
-                ", providerPrice=" + providerPrice +
-                ", location='" + location + '\'' +
-                ", storedSince=" + storedSince +
+                ID + "=" + id +
+                ", " + BRAND + "='" + brand + '\'' +
+                ", " + PRODUCT_NAME + "='" + productName + '\'' +
+                ", " + PRICE_WITHOUT_TAX + "=" + priceWithoutTax +
+                ", " + AMOUNT + "=" + amount +
+                ", " + AVAILABLE_AMOUNT + "=" + availableAmount +
+                ", " + PRODUCT_TYP + "='" + productTyp + '\'' +
+                ", " + DESCRIPTION + "='" + description + '\'' +
+                ", " + PROVIDER + "='" + provider + '\'' +
+                ", " + PROVIDER_PRICE + "=" + providerPrice +
+                ", " + LOCATION + "='" + location + '\'' +
+                ", " + STORED_SINCE + "=" + storedSince +
                 '}';
     }
 

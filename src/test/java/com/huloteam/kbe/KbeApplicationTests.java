@@ -4,9 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.huloteam.kbe.model.Product;
 import com.huloteam.kbe.odm.MongoDatastore;
+import com.huloteam.kbe.service.NominatimService;
+import com.huloteam.kbe.service.OpenStreetMapService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,73 +20,132 @@ import java.util.List;
 @SpringBootTest
 class KbeApplicationTests {
 
-	private final MongoDatastore mongoDatastore = new MongoDatastore();
+	@Autowired
+	private static final OpenStreetMapService OPEN_STREET_MAP_SERVICE = new OpenStreetMapService();
+	private static final NominatimService NOMINATIM_SERVICE = new NominatimService();
+	private static final MongoDatastore MONGO_DATASTORE = new MongoDatastore(true);
+
 	private static final LocalDateTime NOW = LocalDateTime.now();
-	private static final Product EASYAQUA = new Product();
+	private static final Product EASY_AQUA = new Product();
 
-	static {
-		EASYAQUA.setId(1);
-		EASYAQUA.setBrand("Melitta");
-		EASYAQUA.setProductName("1016-02 Easy Aqua");
-		EASYAQUA.setDescription("Schwarz");
-		EASYAQUA.setProvider("Provider A");
-		EASYAQUA.setProductTyp("Water boiler");
-		EASYAQUA.setLocation("Storage 1");
-		EASYAQUA.setAmount(6);
-		EASYAQUA.setAvailableAmount(6);
-		EASYAQUA.setProviderPrice(1794);
-		EASYAQUA.setPriceWithoutTax(2097);
-		EASYAQUA.setStoredSince(NOW);
+	@BeforeEach
+	void init() throws IOException {
+
+		EASY_AQUA.setId(1);
+		EASY_AQUA.setBrand("Melitta");
+		EASY_AQUA.setProductName("1016-02 Easy Aqua");
+		EASY_AQUA.setDescription("Schwarz");
+		EASY_AQUA.setProvider("Provider A");
+		EASY_AQUA.setProductTyp("Water boiler");
+		EASY_AQUA.setLocation("Storage 1");
+		EASY_AQUA.setAmount(6);
+		EASY_AQUA.setAvailableAmount(6);
+		EASY_AQUA.setProviderPrice(1794);
+		EASY_AQUA.setPriceWithoutTax(2097);
+		EASY_AQUA.setStoredSince(NOW);
+
+		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
+
+		NOMINATIM_SERVICE.startApi();
+		OPEN_STREET_MAP_SERVICE.startApi();
+
 	}
 
+	/**
+	 * GoodCase
+	 */
 	@Test
+	@DisplayName("MongoDB put")
 	void putIntoMongoDatabase() {
-		mongoDatastore.saveIntoMongo(EASYAQUA);
 
-		List<Product> productList = mongoDatastore.queryFromMongo("productName", "1016-02 Easy Aqua");
+		List<Product> productList = MONGO_DATASTORE.queryFromMongo(Product.PRODUCT_NAME, "1016-02 Easy Aqua");
 
-		// Should be: Melitta -> Melitta
-		assertEquals(EASYAQUA.getBrand(), productList.get(0).getBrand());
-		// Should be: 1016-02 Easy Aqua -> 1016-02 Easy Aqua
-		assertEquals(EASYAQUA.getProductName(), productList.get(0).getProductName());
+		// Should be: Melitta - Melitta
+		assertEquals("Melitta", productList.get(0).getBrand());
+		// Should be: 1016-02 Easy Aqua - 1016-02 Easy Aqua
+		assertEquals("1016-02 Easy Aqua", productList.get(0).getProductName());
+
 	}
 
+	/**
+	 * GoodCase
+	 */
 	@Test
+	@DisplayName("MongoDB delete")
 	void deleteDataMongoDatabase() {
-		mongoDatastore.saveIntoMongo(EASYAQUA);
-		mongoDatastore.deleteProductInMongo("productName", "1016-02 Easy Aqua");
 
-		List<Product> productList1 = mongoDatastore.queryFromMongo("productName", EASYAQUA.getBrand());
+		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
+		MONGO_DATASTORE.deleteProductInMongo(Product.PRODUCT_NAME, "1016-02 Easy Aqua");
+
+		List<Product> productList1 = MONGO_DATASTORE.queryFromMongo(Product.PRODUCT_NAME, EASY_AQUA.getBrand());
 		List<Product> productList2 = new LinkedList<>();
 
-		// Should be: [] -> []
+		// Should be: [] - []
 		assertEquals(productList1, productList2);
+
 	}
 
+	/**
+	 * GoodCase
+	 */
 	@Test
+	@DisplayName("MongoDB update Integer")
 	void updateAnIntegerDataMongoDatabase() {
-		mongoDatastore.saveIntoMongo(EASYAQUA);
-		mongoDatastore.updateIntoMongo(
+
+		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
+		MONGO_DATASTORE.updateIntoMongo(
 				"productName",
 				"1016-02 Easy Aqua",
 				"amount",
 				"-4");
 
-		// Should be: 2 -> 2
-		assertEquals(2, mongoDatastore.queryFromMongo("brand", "Melitta").get(0).getAmount());
+		// Should be: 2 - 2
+		assertEquals(2, MONGO_DATASTORE.queryFromMongo(Product.BRAND, "Melitta").get(0).getAmount());
+
 	}
 
+	/**
+	 * GoodCase
+	 */
 	@Test
+	@DisplayName("MongoDB update String")
 	void updateAnStringDataMongoDatabase() {
-		mongoDatastore.saveIntoMongo(EASYAQUA);
-		mongoDatastore.updateIntoMongo(
+
+		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
+		MONGO_DATASTORE.updateIntoMongo(
 				"productName",
 				"1016-02 Easy Aqua",
 				"brand",
 				"Miele");
 
-		// Should be: Miele -> Miele
-		assertEquals("Miele", mongoDatastore.queryFromMongo("productName", "1016-02 Easy Aqua").get(0).getBrand());
+		// Should be: Miele - Miele
+		assertEquals("Miele", MONGO_DATASTORE.queryFromMongo(Product.PRODUCT_NAME, "1016-02 Easy Aqua").get(0).getBrand());
+
+	}
+
+	@Test
+	@DisplayName("OpenStreetMapService LonLat")
+	void getLonLatOfOpenStreetMapService() {
+
+		// Should be: 14.473361149999999 - 14.473361149999999 (Lon)
+		assertEquals(14.473361149999999, NOMINATIM_SERVICE.getToLon());
+
+		// Should be: 51.60227345 - 51.60227345 (Lat)
+		assertEquals(51.60227345, NOMINATIM_SERVICE.getToLat());
+
+		// assertEquals("", NOMINATIM_SERVICE.getLonLatResponse());
+
+	}
+
+	@Test
+	@DisplayName("OpenStreetMapService duration")
+	void getDurationOfOpenStreetMapService() {
+
+		// Should be: 1.4669869761833334 - 1.4669869761833334 (Minutes?)
+		assertEquals(1.4669869761833334, OPEN_STREET_MAP_SERVICE.getDuration());
+
+		// assertEquals("", OPEN_STREET_MAP_SERVICE.getDurationResponse());
+
 	}
 
 }
