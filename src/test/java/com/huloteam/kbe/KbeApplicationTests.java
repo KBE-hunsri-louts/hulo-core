@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +28,7 @@ class KbeApplicationTests {
 	private static final Product EASY_AQUA = new Product();
 
 	@BeforeEach
-	void init() throws IOException {
+	void init() {
 
 		EASY_AQUA.setId(1);
 		EASY_AQUA.setBrand("Melitta");
@@ -94,10 +93,11 @@ class KbeApplicationTests {
 
 		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
 		MONGO_DATASTORE.updateIntoMongo(
-				"productName",
+				Product.PRODUCT_NAME,
 				"1016-02 Easy Aqua",
-				"amount",
+				Product.AMOUNT,
 				"-4");
+
 
 		// Should be: 2 - 2
 		assertEquals(2, MONGO_DATASTORE.queryFromMongo(Product.BRAND, "Melitta").get(0).getAmount());
@@ -113,9 +113,9 @@ class KbeApplicationTests {
 
 		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
 		MONGO_DATASTORE.updateIntoMongo(
-				"productName",
+				Product.PRODUCT_NAME,
 				"1016-02 Easy Aqua",
-				"brand",
+				Product.BRAND,
 				"Miele");
 
 		// Should be: Miele - Miele
@@ -123,6 +123,25 @@ class KbeApplicationTests {
 
 	}
 
+	@Test
+	@DisplayName("MongoDB update String with numbers")
+	void updateAnStringWithNumbersMongoDatabase() {
+
+		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
+		MONGO_DATASTORE.updateIntoMongo(
+				Product.PRODUCT_NAME,
+				"1016-02 Easy Aqua",
+				Product.PRODUCT_NAME,
+				"1016-03 Easy Aqua");
+
+		// Should be: 1016-03 Easy Aqua - 1016-03 Easy Aqua
+		assertEquals("1016-03 Easy Aqua", MONGO_DATASTORE.queryFromMongo(Product.PRODUCT_NAME, "1016-03 Easy Aqua").get(0).getProductName());
+
+	}
+
+	/**
+	 * GoodCase
+	 */
 	@Test
 	@DisplayName("OpenStreetMapService LonLat")
 	void getLonLatOfOpenStreetMapService() {
@@ -137,12 +156,15 @@ class KbeApplicationTests {
 
 	}
 
+	/**
+	 * GoodCase
+	 */
 	@Test
 	@DisplayName("OpenStreetMapService duration")
 	void getDurationOfOpenStreetMapService() {
 
-		// Should be: 1.4669869761833334 - 1.4669869761833334 (Minutes?)
-		assertEquals(1.4669869761833334, OPEN_STREET_MAP_SERVICE.getDuration());
+		// Should be: 14.549448333333334 - 14.549448333333334 (Minutes)
+		assertEquals(14.549448333333334, OPEN_STREET_MAP_SERVICE.getDuration());
 
 		// assertEquals("", OPEN_STREET_MAP_SERVICE.getDurationResponse());
 

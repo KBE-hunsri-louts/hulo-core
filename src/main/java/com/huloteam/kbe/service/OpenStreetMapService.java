@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class OpenStreetMapService {
@@ -126,23 +125,19 @@ public class OpenStreetMapService {
 
     private void getSpecificJsonInformation(StringBuilder content, String pathName, String searchInformation) {
 
-        if (Objects.equals(searchInformation, "distance")) {
+        JSONObject object = new JSONObject(content.toString());
+        JSONArray array = object.getJSONArray(pathName);
 
-            JSONObject object = new JSONObject(content.toString());
-            JSONArray array = object.getJSONArray(pathName);
+        String durationString = "";
 
-            String durationString = "";
+        for (int i = 0; i < array.length(); i++) {
+            durationString = array.getJSONObject(i).getString(searchInformation);
+        }
 
-            for (int i = 0; i < array.length(); i++) {
-                durationString = array.getJSONObject(i).getString(searchInformation);
-            }
+        System.out.println(durationString);
 
-            System.out.println(durationString);
-
-            if (!durationString.isEmpty()) {
-                duration = Double.parseDouble(durationString);
-            }
-
+        if (!durationString.isEmpty()) {
+            duration = Double.parseDouble(durationString);
         }
 
     }
