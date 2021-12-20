@@ -18,12 +18,13 @@ public class MongoDatastore {
 
     private static Datastore datastore;
 
-    public MongoDatastore(boolean testDatabase) {
+    public MongoDatastore(boolean isTestDatabase) {
 
-        if (testDatabase) {
+        if (isTestDatabase) {
 
             Morphia morphia = new Morphia();
             morphia.mapPackage("com.huloteam.kbe.model.product.class");
+
             datastore = morphia.createDatastore(new MongoClient(), "productStorageTest");
             datastore.ensureIndexes();
 
@@ -31,6 +32,7 @@ public class MongoDatastore {
 
             Morphia morphia = new Morphia();
             morphia.mapPackage("com.huloteam.kbe.model.product.class");
+
             datastore = morphia.createDatastore(new MongoClient(), "productStorage");
             datastore.ensureIndexes();
 
@@ -38,20 +40,45 @@ public class MongoDatastore {
 
     }
 
+    /**
+     * Saves a product into a mongo database.
+     * @param product which contains data of a real product.
+     */
     public void saveIntoMongo(Product product) {
         datastore.save(product);
     }
 
+    /**
+     * Gets all products which got the information we are looking for.
+     * For examples please look into KbeApplicationTests.
+     * @param category is a String which contains a category or genre of a product.
+     * @param productCategoryToLookFor is a String with specific information to the category.
+     * @return a list of products.
+     */
     public List<Product> queryFromMongo(String category, String productCategoryToLookFor) {
-
         return datastore.createQuery(Product.class)
                 .field(category)
                 .contains(productCategoryToLookFor)
                 .find()
                 .toList();
-
     }
 
+    /**
+     * Gets all products of mongo database.
+     * @return a list of all products.
+     */
+    public List<Product> queryAllFromMongo() {
+        return datastore.createQuery(Product.class).find().toList();
+    }
+
+    /**
+     * Updates a product in mongo database.
+     * For examples please look into KbeApplicationTests.
+     * @param category is a String which contains a category or genre of a product.
+     * @param productCategoryToUpdate is a String with specific information to the category.
+     * @param genreToBeUpdated is a String which contains a category or genre of a product.
+     * @param updateInformation is a String with specific information to the category which will be changed.
+     */
     public void updateIntoMongo(String category, String productCategoryToUpdate, String genreToBeUpdated, String updateInformation) {
 
         Query<Product> query = datastore.createQuery(Product.class)
@@ -73,6 +100,12 @@ public class MongoDatastore {
 
     }
 
+    /**
+     * Deletes a product of mongo database.
+     * For examples please look into KbeApplicationTests.
+     * @param category is a String which contains a category or genre of a product.
+     * @param productCategoryToDelete is a String with specific information to the category.
+     */
     public void deleteProductInMongo(String category, String productCategoryToDelete) {
 
         Query<Product> query = datastore.createQuery(Product.class)
