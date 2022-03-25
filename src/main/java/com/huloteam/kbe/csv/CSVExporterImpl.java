@@ -20,12 +20,13 @@ public class CSVExporterImpl implements CSVExporter {
 
     @Override
     public void createCSV(Product product) {
-        String[] productData = new String[3];
-        productData[0] = product.getProvider();
-        productData[1] = product.getProviderPrice() + "";
-        productData[2] = product.getStoredSince() + "";
+        String[] productData = new String[4];
+        productData[0] = product.getProductName();
+        productData[1] = product.getProvider();
+        productData[2] = product.getProviderPrice() + "";
+        productData[3] = product.getStoredSince() + "";
 
-        String string = product.getProvider().concat(String.valueOf(product.getProviderPrice())).concat(product.getStoredSince().toString());
+        String string = product.getProductName().concat(product.getProvider()).concat(String.valueOf(product.getProviderPrice())).concat(product.getStoredSince().toString());
         int hashFromString = string.hashCode();
         fileName = hashFromString + ".csv";
 
