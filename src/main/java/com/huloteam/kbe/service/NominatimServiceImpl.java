@@ -15,7 +15,6 @@ import java.net.URL;
  */
 @Service
 public class NominatimServiceImpl implements NominatimService {
-
     private String response;
     private static double toLat;
     private static double toLon;
@@ -25,14 +24,12 @@ public class NominatimServiceImpl implements NominatimService {
      */
     @Override
     public void startApi(String street, String city, String zip) {
-
         String lonLatUrlString = "https://nominatim.openstreetmap.org/search?format=json"
                 + "&street=" + street
                 + "&city=" + city
                 + "&postalcode=" + zip;
 
         openConnection(lonLatUrlString);
-
     }
 
     /**
@@ -40,27 +37,21 @@ public class NominatimServiceImpl implements NominatimService {
      * @param urlString is a String which contains a URL.
      */
     private void openConnection(String urlString) {
-
         HttpURLConnection connection = null;
 
         try {
-
             URL distanceUrl = new URL(urlString);
             connection = (HttpURLConnection) distanceUrl.openConnection();
             connection.setRequestMethod("GET");
 
             response = getResponse(connection);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         } finally {
-
             if (connection != null) {
                 connection.disconnect();
             }
-
         }
-
     }
 
     /**
@@ -71,7 +62,6 @@ public class NominatimServiceImpl implements NominatimService {
      * @throws IOException might be thrown while using Streams.
      */
     private String getResponse(HttpURLConnection connection) throws IOException {
-
         StringBuilder fullResponseBuilder = new StringBuilder();
 
         // read response content
@@ -95,9 +85,7 @@ public class NominatimServiceImpl implements NominatimService {
 
         getSpecificJsonInformation(content);
         fullResponseBuilder.append("Response: ").append(content);
-
         return fullResponseBuilder.toString();
-
     }
 
     /**
@@ -105,28 +93,24 @@ public class NominatimServiceImpl implements NominatimService {
      * @param content is a StringBuilder which contains JSON data.
      */
     private static void getSpecificJsonInformation(StringBuilder content) {
-
         JSONArray array = new JSONArray(content.toString());
-
         String lonString = "";
 
-        for (int i = 0; i < array.length(); i++) {
-            lonString = array.getJSONObject(i).getString("lon");
+        for (int index = 0; index < array.length(); index++) {
+            lonString = array.getJSONObject(index).getString("lon");
         }
 
         System.out.println(lonString);
 
         String latString = "";
 
-        for (int i = 0; i < array.length(); i++) {
-            latString = array.getJSONObject(i).getString("lat");
+        for (int index = 0; index < array.length(); index++) {
+            latString = array.getJSONObject(index).getString("lat");
         }
 
         System.out.println(latString);
-
         toLon = Double.parseDouble(lonString);
         toLat = Double.parseDouble(latString);
-
     }
 
     @Override
@@ -143,5 +127,4 @@ public class NominatimServiceImpl implements NominatimService {
     public String getResponse() {
         return response;
     }
-
 }

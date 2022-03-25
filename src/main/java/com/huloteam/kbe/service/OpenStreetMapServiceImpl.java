@@ -13,7 +13,6 @@ import java.net.URL;
  */
 @Service
 public class OpenStreetMapServiceImpl implements OpenStreetMapService {
-
     private String response;
     private static double duration;
     private final double homeLat = 52.0879085;
@@ -24,7 +23,6 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
      */
     @Override
     public void startApi(String street, String city, String zip) {
-
         NominatimServiceImpl nominatimServiceImpl = new NominatimServiceImpl();
         nominatimServiceImpl.startApi(street, city, zip);
 
@@ -35,7 +33,6 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
                 + nominatimServiceImpl.getToLon();
 
         openConnection(durationUrlString);
-
     }
 
     /**
@@ -43,27 +40,21 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
      * @param urlString is a String which contains a URL.
      */
     private void openConnection(String urlString) {
-
         HttpURLConnection connection = null;
 
         try {
-
             URL distanceUrl = new URL(urlString);
             connection = (HttpURLConnection) distanceUrl.openConnection();
             connection.setRequestMethod("GET");
 
             response = getResponse(connection, "trips", "duration");
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
         } finally {
-
             if (connection != null) {
                 connection.disconnect();
             }
-
         }
-
     }
 
     /**
@@ -77,9 +68,7 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
       * @throws IOException might be thrown while using Streams.
       */
     private String getResponse(HttpURLConnection connection, String pathName, String searchInformation) throws IOException {
-
         StringBuilder fullResponseBuilder = new StringBuilder();
-
         // read response content
         Reader streamReader = null;
 
@@ -101,9 +90,7 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
 
         getSpecificJsonInformation(content, pathName, searchInformation);
         fullResponseBuilder.append("Response: ").append(content);
-
         return fullResponseBuilder.toString();
-
     }
 
     /**
@@ -113,7 +100,6 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
      * @param searchInformation is a name of the important value which we are looking for.
      */
     private void getSpecificJsonInformation(StringBuilder content, String pathName, String searchInformation) {
-
         JSONObject object = new JSONObject(content.toString());
         JSONArray array = object.getJSONArray(pathName);
 
@@ -128,9 +114,7 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
         if (!durationString.isEmpty()) {
             duration = Double.parseDouble(durationString);
         }
-
     }
-
 
     @Override
     public double getDuration() {
@@ -141,5 +125,4 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
     public String getResponse() {
        return response;
    }
-
 }

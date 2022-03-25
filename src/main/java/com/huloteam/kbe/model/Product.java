@@ -14,20 +14,27 @@ import java.util.Objects;
 @Entity("Product")
 public class Product {
 
+    // Mongo
     @Id
     private long id;
     private String productName;
     private String description;
     private String brand;
-    private String provider;
     private String productTyp;
     private String location;
     private int amount;
     private int availableAmount;
     private int priceWithoutTax;
+
+    // Calculator
     private int priceWithTax;
+
+    // Storage - PostgreSQL
+    private String provider;
     private int providerPrice;
     private LocalDateTime storedSince;
+
+    // External API
     private double[] specificLocation = new double[2];
 
     public static final String ID = "id";

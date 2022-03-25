@@ -14,13 +14,11 @@ public class CalculatorServiceImpl implements CalculatorService {
 
     @Override
     public double getPriceWithTax(String vatID, String price) {
-
         String calculatorUrlString = "http://localhost:8080/calculator" +
                 "?vatID=" + vatID +
                 "&price=" + price;
 
         return openConnection(calculatorUrlString);
-
     }
 
     /**
@@ -28,29 +26,23 @@ public class CalculatorServiceImpl implements CalculatorService {
      * @param urlString is a String which contains a URL.
      */
     private double openConnection(String urlString) {
-
         HttpURLConnection connection = null;
 
         try {
-
             URL distanceUrl = new URL(urlString);
             connection = (HttpURLConnection) distanceUrl.openConnection();
             connection.setRequestMethod("GET");
 
             return Double.parseDouble(getResponse(connection));
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             // TODO is that legal?
             return -1;
         } finally {
-
             if (connection != null) {
                 connection.disconnect();
             }
-
         }
-
     }
 
     /**
@@ -61,7 +53,6 @@ public class CalculatorServiceImpl implements CalculatorService {
      * @throws IOException might be thrown while using Streams.
      */
     private String getResponse(HttpURLConnection connection) throws IOException {
-
         // read response content
         Reader streamReader = null;
 
@@ -80,9 +71,6 @@ public class CalculatorServiceImpl implements CalculatorService {
         }
 
         bufferedReader.close();
-
         return content.toString();
-
     }
-
 }

@@ -15,29 +15,26 @@ import java.util.List;
  * @author Kevin Jagielski
  */
 public class MongoDatastore {
-
     private static Datastore datastore;
 
+    /**
+     * Constructor.
+     * @param isTestDatabase true - create test MongoDB, false - create "real" MongoDB
+     */
     public MongoDatastore(boolean isTestDatabase) {
-
         if (isTestDatabase) {
-
             Morphia morphia = new Morphia();
             morphia.mapPackage("com.huloteam.kbe.model.product.class");
 
             datastore = morphia.createDatastore(new MongoClient(), "productStorageTest");
             datastore.ensureIndexes();
-
         } else {
-
             Morphia morphia = new Morphia();
             morphia.mapPackage("com.huloteam.kbe.model.product.class");
 
             datastore = morphia.createDatastore(new MongoClient(), "productStorage");
             datastore.ensureIndexes();
-
         }
-
     }
 
     /**
@@ -80,7 +77,6 @@ public class MongoDatastore {
      * @param updateInformation is a String with specific information to the category which will be changed.
      */
     public void updateIntoMongo(String category, String productCategoryToUpdate, String genreToBeUpdated, String updateInformation) {
-
         Query<Product> query = datastore.createQuery(Product.class)
                 .field(category)
                 .contains(productCategoryToUpdate);
@@ -97,7 +93,6 @@ public class MongoDatastore {
         if (updateOperations != null) {
             datastore.update(query, updateOperations);
         }
-
     }
 
     /**
@@ -107,13 +102,10 @@ public class MongoDatastore {
      * @param productCategoryToDelete is a String with specific information to the category.
      */
     public void deleteProductInMongo(String category, String productCategoryToDelete) {
-
         Query<Product> query = datastore.createQuery(Product.class)
                 .field(category)
                 .contains(productCategoryToDelete);
 
         datastore.delete(query);
-
     }
-
 }
