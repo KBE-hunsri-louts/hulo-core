@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 /**
  * Is the MVC-Controller. Which handles data transfer between view and com.huloteam.kbe.model.*
  */
-@RestController
 public class ProductServiceController {
 
     /*
@@ -48,7 +47,5 @@ public class ProductServiceController {
         return new ResponseEntity<>("Product is deleted successfully", HttpStatus.OK);
 
     }
-
      */
-
 }

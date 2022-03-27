@@ -14,9 +14,10 @@ import java.util.stream.Stream;
  */
 public class CSVExporterImpl implements CSVExporter {
     // TODO needs to be placed somewhere else.
-    String PATH = "/Schule/AI Studium/KBE/Vorlesung/";
-    String directoryName = PATH.concat("CSV Folder");
-    String fileName;
+    private final String PATH = "/Schule/AI Studium/KBE/Vorlesung/";
+    private final String directoryName = PATH.concat("CSV Folder");
+
+    private String fileName;
 
     @Override
     public void createCSV(Product product) {
@@ -72,7 +73,7 @@ public class CSVExporterImpl implements CSVExporter {
     }
 
     /**
-     * Handles problematic characters.
+     * Handles problematic symbols.
      * @param data is a String.
      * @return a String.
      */

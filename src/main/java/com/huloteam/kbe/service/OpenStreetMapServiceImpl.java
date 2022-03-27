@@ -9,14 +9,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Service class which communicates with the OpenStreetMap API called ODRM.
+ * Service class which communicates with the OpenStreetMap API called OSRM.
  */
 @Service
 public class OpenStreetMapServiceImpl implements OpenStreetMapService {
     private String response;
     private static double duration;
-    private final double homeLat = 52.0879085;
-    private final double homeLon = 13.1697905;
+    private final double homeLat = 52.5359076;
+    private final double homeLon = 13.6528199;
 
     /**
      * Is the entry point to access our service.

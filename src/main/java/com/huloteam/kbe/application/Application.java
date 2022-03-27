@@ -2,11 +2,9 @@ package com.huloteam.kbe.application;
 
 import com.huloteam.kbe.model.Product;
 import com.huloteam.kbe.odm.MongoDatastore;
-import com.huloteam.kbe.service.CalculatorService;
-import com.huloteam.kbe.service.CalculatorServiceImpl;
-import com.huloteam.kbe.service.NominatimService;
-import com.huloteam.kbe.service.NominatimServiceImpl;
+import com.huloteam.kbe.service.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -16,6 +14,7 @@ public class Application {
     private final MongoDatastore mongoDatastore = new MongoDatastore(false);
     private final NominatimService nominatimService = new NominatimServiceImpl();
     private final CalculatorService calculatorService = new CalculatorServiceImpl();
+    private final StorageService storageService = new StorageServiceImpl();
 
     private Product product;
 
@@ -23,37 +22,30 @@ public class Application {
      * Provides one product.
      * @param genre is a String which contains a category or genre of a product.
      * @param genreInformation is a String with specific information to the category.
-     * @param street is name of a street.
-     * @param city is name of a city.
-     * @param zip is an identity number for a city or state.
+     * @param vatID is a String which contains tax information.
      * @return one product with all ten attributes.
      */
-    public Product getSpecificProduct(String genre, String genreInformation,
-                                      String street, String city, String zip,
-                                      String vatID) {
+    public Product getSpecificProduct(String genre, String genreInformation, String vatID) {
         product = getMongoData(genre, genreInformation);
-        getNominatimData(street, city, zip);
         getCalculatorData(vatID);
-        // getStoredData();
+        getStoredData(product.getProductName());
 
         return product;
     }
 
     /**
-     * Will provide all products in one list.
-     * @return a list with all products.
+     * Get one of ten product attributes of the external api Nominatim.
      */
-    public List<Product> getAllProducts() {
-        List<Product> returnList = mongoDatastore.queryAllFromMongo();
+    public void getNominatimData(String street, String city, String zip) {
+        nominatimService.startApi(street, city, zip);
 
-        for (Product product : returnList) {
+        if (product != null) {
+            double[] lonLatCoordinates = new double[2];
+            lonLatCoordinates[0] = nominatimService.getToLon();
+            lonLatCoordinates[1] = nominatimService.getToLat();
 
-            // TODO wont work!
-            // getNominatimData();
-
+            product.setSpecificLocation(lonLatCoordinates);
         }
-
-        return returnList;
     }
 
     /**
@@ -75,20 +67,9 @@ public class Application {
     }
 
     /**
-     * Get one of ten product attributes of the external api Nominatim.
+     * Get one of ten product attributes from calculator component.
+     * @param vatID is a String which says the component which tax he should use
      */
-    private void getNominatimData(String street, String city, String zip) {
-        nominatimService.startApi(street, city, zip);
-
-        if (product != null) {
-            double[] lonLatCoordinates = new double[2];
-            lonLatCoordinates[0] = nominatimService.getToLon();
-            lonLatCoordinates[1] = nominatimService.getToLat();
-
-            product.setSpecificLocation(lonLatCoordinates);
-        }
-    }
-
     private void getCalculatorData(String vatID) {
         double calculatedPrice = calculatorService.getPriceWithTax(
                 vatID,
@@ -97,7 +78,17 @@ public class Application {
         product.setPriceWithTax((int) (calculatedPrice * 100));
     }
 
-    private void getStoredData() {
+    /**
+     * Get three of ten product attributes stored in storage component.
+     * @param productName is a String and needed to find the right product information
+     */
+    private void getStoredData(String productName) {
+        List<String> productInformation = storageService.getStorageProductInformation(productName);
 
+        if (productInformation != null) {
+            product.setProvider(productInformation.get(0));
+            product.setProviderPrice(Integer.parseInt(productInformation.get(1)));
+            product.setStoredSince(LocalDateTime.parse(productInformation.get(2)));
+        }
     }
 }
