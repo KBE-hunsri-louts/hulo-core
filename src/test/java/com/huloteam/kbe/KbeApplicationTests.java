@@ -26,9 +26,14 @@ class KbeApplicationTests {
 	private static final NominatimService NOMINATIM_SERVICE = new NominatimServiceImpl();
 	private static final MongoDatastore MONGO_DATASTORE = new MongoDatastore(true);
 	private static final CalculatorService CALCULATOR_SERVICE = new CalculatorServiceImpl();
+	private static final StorageService STORAGE_SERVICE = new StorageServiceImpl();
 
 	private static final Product EASY_AQUA = new Product();
 	private static final Product WWE_360_WPS = new Product();
+
+	private static final double LON = 13.411678737741736;
+	private static final double LAT = 52.5680912;
+	private static final double DURATION = 0;
 
 	@BeforeEach
 	void init() {
@@ -53,9 +58,10 @@ class KbeApplicationTests {
 		WWE_360_WPS.setPriceWithoutTax(52857);
 
 		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
+		MONGO_DATASTORE.saveIntoMongo(WWE_360_WPS);
 
-		NOMINATIM_SERVICE.startApi("bogenstrasse1", "hoppegarten", "15366");
-		OPEN_STREET_MAP_SERVICE.startApi("bogenstrasse1", "hoppegarten", "15366");
+		NOMINATIM_SERVICE.startApi("berlinerstrasse+13", "berlin", "13187");
+		OPEN_STREET_MAP_SERVICE.startApi("berlinerstrasse+13", "berlin", "13187");
 	}
 
 	@Test
@@ -129,15 +135,15 @@ class KbeApplicationTests {
 	@Test
 	@DisplayName("OpenStreetMapService LonLat")
 	void getLonLatOfOpenStreetMapService() {
-		assertEquals(14.473361149999999, NOMINATIM_SERVICE.getToLon());
-		assertEquals(51.60227345, NOMINATIM_SERVICE.getToLat());
+		assertEquals(LON, NOMINATIM_SERVICE.getToLon());
+		assertEquals(LAT, NOMINATIM_SERVICE.getToLat());
 		// assertEquals("", NOMINATIM_SERVICE.getLonLatResponse());
 	}
 
 	@Test
 	@DisplayName("OpenStreetMapService duration")
 	void getDurationOfOpenStreetMapService() {
-		assertEquals(14.549448333333334, OPEN_STREET_MAP_SERVICE.getDuration());
+		assertEquals(DURATION, OPEN_STREET_MAP_SERVICE.getDuration());
 		// assertEquals("", OPEN_STREET_MAP_SERVICE.getDurationResponse());
 	}
 
@@ -146,5 +152,11 @@ class KbeApplicationTests {
 	void getCalculatedPrice() {
 		// Can just be tested if the calculator is online.
 		assertEquals(24.95, CALCULATOR_SERVICE.getPriceWithTax("DE_REGULAR", "20.97"));
+	}
+
+	@Test
+	@DisplayName("StorageService productInformation")
+	void getStorageProductInformation() {
+		assertEquals(EASY_AQUA.getProvider(), STORAGE_SERVICE.getStorageProductInformation(EASY_AQUA.getProductName()));
 	}
 }
