@@ -1,5 +1,7 @@
 package com.huloteam.kbe.service;
 
+import com.huloteam.kbe.validator.Validator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,7 +17,7 @@ public class StorageServiceImpl implements StorageService {
         String storageUrlString = "http://localhost:8080/storage" +
                 "?productName=" + productName;
 
-        return null;
+        return openConnection(storageUrlString);
     }
 
     /**
@@ -35,7 +37,7 @@ public class StorageServiceImpl implements StorageService {
             exception.printStackTrace();
             return null;
         } finally {
-            if (connection != null) {
+            if (Validator.isObjectNotNull(connection)) {
                 connection.disconnect();
             }
         }
@@ -44,7 +46,7 @@ public class StorageServiceImpl implements StorageService {
     private String getResponse(HttpURLConnection connection) throws IOException {
         Reader streamReader = null;
 
-        if (connection.getResponseCode() > 299) {
+        if (Validator.isNumberBiggerLowerComparison(connection.getResponseCode(), 299)) {
             streamReader = new InputStreamReader(connection.getErrorStream());
         } else {
             streamReader = new InputStreamReader(connection.getInputStream());
@@ -54,7 +56,7 @@ public class StorageServiceImpl implements StorageService {
         String inputLine;
         StringBuilder content = new StringBuilder();
 
-        while ((inputLine = bufferedReader.readLine()) != null) {
+        while (Validator.isObjectNotNull(inputLine = bufferedReader.readLine())) {
             content.append(inputLine);
         }
 

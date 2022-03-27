@@ -28,7 +28,7 @@ public class Application {
     public Product getSpecificProduct(String genre, String genreInformation, String vatID) {
         product = getMongoData(genre, genreInformation);
         getCalculatorData(vatID);
-        getStoredData(product.getProductName());
+        // getStoredData(product.getProductName());
 
         return product;
     }
@@ -82,6 +82,7 @@ public class Application {
      * Get three of ten product attributes stored in storage component.
      * @param productName is a String and needed to find the right product information
      */
+    /*
     private void getStoredData(String productName) {
         List<String> productInformation = storageService.getStorageProductInformation(productName);
 
@@ -91,4 +92,6 @@ public class Application {
             product.setStoredSince(LocalDateTime.parse(productInformation.get(2)));
         }
     }
+
+     */
 }

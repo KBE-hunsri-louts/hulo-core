@@ -1,12 +1,12 @@
 package com.huloteam.kbe.odm;
 
 import com.huloteam.kbe.model.Product;
+import com.huloteam.kbe.validator.Validator;
 import com.mongodb.MongoClient;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import dev.morphia.query.Query;
 import dev.morphia.query.UpdateOperations;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
 
@@ -83,14 +83,13 @@ public class MongoDatastore {
 
         UpdateOperations<Product> updateOperations;
 
-        // https://www.baeldung.com/java-check-string-number
-        if (NumberUtils.isCreatable(updateInformation)) {
+        if (Validator.isStringOnlyContainingNumbers(updateInformation)) {
             updateOperations = datastore.createUpdateOperations(Product.class).inc(genreToBeUpdated, Integer.valueOf(updateInformation));
         } else {
             updateOperations = datastore.createUpdateOperations(Product.class).set(genreToBeUpdated, updateInformation);
         }
 
-        if (updateOperations != null) {
+        if (Validator.isObjectNotNull(updateOperations)) {
             datastore.update(query, updateOperations);
         }
     }

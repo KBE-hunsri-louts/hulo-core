@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * This class creates CSV files and stores them into a folder.
  */
 public class CSVExporterImpl implements CSVExporter {
-    // TODO needs to be placed somewhere else.
+    // TODO path needs to be changed
     private final String PATH = "/Schule/AI Studium/KBE/Vorlesung/";
     private final String directoryName = PATH.concat("CSV Folder");
 
@@ -40,7 +40,7 @@ public class CSVExporterImpl implements CSVExporter {
      */
     private void createFolder() {
         File directory = new File(directoryName);
-        if (! directory.exists()){
+        if (!directory.exists()){
             directory.mkdir();
         }
     }
