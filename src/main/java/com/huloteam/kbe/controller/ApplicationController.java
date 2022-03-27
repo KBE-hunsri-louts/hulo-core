@@ -14,6 +14,10 @@ public class ApplicationController {
     public ResponseEntity<Object> provideOneProduct(@RequestParam(name="genre") String genre,
                                                     @RequestParam(name="productGenre") String productGenre,
                                                     @RequestParam(name="vatID") String vatID) {
-        return new ResponseEntity<>(application.getSpecificProduct(genre, productGenre, vatID), HttpStatus.OK);
+        if (!genre.isEmpty() && !productGenre.isEmpty() && !vatID.isEmpty()) {
+            return new ResponseEntity<>(application.getSpecificProduct(genre, productGenre, vatID), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Every parameter must be filled!", HttpStatus.BAD_REQUEST);
+        }
     }
 }

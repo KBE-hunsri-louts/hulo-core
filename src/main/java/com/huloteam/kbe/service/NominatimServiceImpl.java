@@ -1,5 +1,6 @@
 package com.huloteam.kbe.service;
 
+import com.huloteam.kbe.validator.Validator;
 import org.json.JSONArray;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,7 @@ public class NominatimServiceImpl implements NominatimService {
         } catch (Exception exception) {
             exception.printStackTrace();
         } finally {
-            if (connection != null) {
+            if (Validator.isObjectNotNull(connection)) {
                 connection.disconnect();
             }
         }
@@ -67,7 +68,7 @@ public class NominatimServiceImpl implements NominatimService {
         // read response content
         Reader streamReader = null;
 
-        if (connection.getResponseCode() > 299) {
+        if (Validator.isNumberBiggerLowerComparison(connection.getResponseCode(), 299)) {
             streamReader = new InputStreamReader(connection.getErrorStream());
         } else {
             streamReader = new InputStreamReader(connection.getInputStream());
@@ -77,7 +78,7 @@ public class NominatimServiceImpl implements NominatimService {
         String inputLine;
         StringBuilder content = new StringBuilder();
 
-        while ((inputLine = bufferedReader.readLine()) != null) {
+        while (Validator.isObjectNotNull(inputLine = bufferedReader.readLine())) {
             content.append(inputLine);
         }
 
