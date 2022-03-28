@@ -4,7 +4,6 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -13,7 +12,6 @@ import java.util.Objects;
  */
 @Entity("Product")
 public class Product {
-
     // Mongo
     @Id
     private long id;
@@ -26,16 +24,10 @@ public class Product {
     private int availableAmount;
     private int priceWithoutTax;
 
-    // Calculator
-    private int priceWithTax;
-
     // Storage - PostgreSQL
     private String provider;
     private int providerPrice;
     private LocalDateTime storedSince;
-
-    // External API
-    private double[] specificLocation = new double[2];
 
     public static final String ID = "id";
     public static final String PRODUCT_NAME = "productName";
@@ -47,10 +39,8 @@ public class Product {
     public static final String AMOUNT = "amount";
     public static final String AVAILABLE_AMOUNT = "availableAmount";
     public static final String PRICE_WITHOUT_TAX = "priceWithoutTax";
-    public static final String PRICE_WITH_TAX = "priceWithTax";
     public static final String PROVIDER_PRICE = "providerPrice";
     public static final String STORED_SINCE = "storedSince";
-    public static final String SPECIFIC_LOCATION = "specificLocation";
 
 
     public long getId() {
@@ -93,20 +83,12 @@ public class Product {
         return priceWithoutTax;
     }
 
-    public int getPriceWithTax() {
-        return priceWithTax;
-    }
-
     public int getProviderPrice() {
         return providerPrice;
     }
 
     public LocalDateTime getStoredSince() {
         return storedSince;
-    }
-
-    public double[] getSpecificLocation() {
-        return specificLocation;
     }
 
 
@@ -146,10 +128,6 @@ public class Product {
         this.priceWithoutTax = priceWithoutTax;
     }
 
-    public void setPriceWithTax(int priceWithTax) {
-        this.priceWithTax = priceWithTax;
-    }
-
     public void setProviderPrice(int providerPrice) {
         this.providerPrice = providerPrice;
     }
@@ -162,24 +140,18 @@ public class Product {
         this.storedSince = storedSince;
     }
 
-    public void setSpecificLocation(double[] specificLocation) {
-        this.specificLocation = specificLocation;
-    }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return id == product.id && amount == product.amount && availableAmount == product.availableAmount && priceWithoutTax == product.priceWithoutTax && priceWithTax == product.priceWithTax && providerPrice == product.providerPrice && Objects.equals(productName, product.productName) && Objects.equals(description, product.description) && Objects.equals(brand, product.brand) && Objects.equals(provider, product.provider) && Objects.equals(productTyp, product.productTyp) && Objects.equals(location, product.location) && Objects.equals(storedSince, product.storedSince) && Arrays.equals(specificLocation, product.specificLocation);
+        return id == product.id && amount == product.amount && availableAmount == product.availableAmount && priceWithoutTax == product.priceWithoutTax && providerPrice == product.providerPrice && Objects.equals(productName, product.productName) && Objects.equals(description, product.description) && Objects.equals(brand, product.brand) && Objects.equals(productTyp, product.productTyp) && Objects.equals(location, product.location) && Objects.equals(provider, product.provider) && Objects.equals(storedSince, product.storedSince);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, productName, description, brand, provider, productTyp, location, amount, availableAmount, priceWithoutTax, priceWithTax, providerPrice, storedSince);
-        result = 31 * result + Arrays.hashCode(specificLocation);
-        return result;
+        return Objects.hash(id, productName, description, brand, productTyp, location, amount, availableAmount, priceWithoutTax, provider, providerPrice, storedSince);
     }
 
     @Override
@@ -189,7 +161,6 @@ public class Product {
                 ", " + BRAND + "='" + brand + '\'' +
                 ", " + PRODUCT_NAME + "='" + productName + '\'' +
                 ", " + PRICE_WITHOUT_TAX + "=" + priceWithoutTax +
-                ", " + PRICE_WITH_TAX + "=" + priceWithTax +
                 ", " + AMOUNT + "=" + amount +
                 ", " + AVAILABLE_AMOUNT + "=" + availableAmount +
                 ", " + PRODUCT_TYP + "='" + productTyp + '\'' +
@@ -197,9 +168,7 @@ public class Product {
                 ", " + PROVIDER + "='" + provider + '\'' +
                 ", " + PROVIDER_PRICE + "=" + providerPrice +
                 ", " + LOCATION + "='" + location + '\'' +
-                ", " + SPECIFIC_LOCATION + Arrays.toString(specificLocation) +
                 ", " + STORED_SINCE + "=" + storedSince +
                 '}';
     }
-
 }
