@@ -20,11 +20,13 @@ public class KbeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KbeApplication.class, args);
 
+		/*
 		EASY_AQUA.setProductName("1016-02 Easy Aqua");
 		EASY_AQUA.setProvider("Provider 1");
 		EASY_AQUA.setProviderPrice(1794);
 		EASY_AQUA.setStoredSince(LocalDateTime.now());
 
 		CSV_EXPORTER.createCSV(EASY_AQUA);
+		 */
 	}
 }

@@ -104,17 +104,13 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
         JSONObject object = new JSONObject(content.toString());
         JSONArray array = object.getJSONArray(pathName);
 
-        String durationString = "";
+        double localDuration = 0;
 
         for (int i = 0; i < array.length(); i++) {
-            durationString = array.getJSONObject(i).getString(searchInformation);
+            localDuration = array.getJSONObject(i).getDouble(searchInformation);
         }
 
-        System.out.println(durationString);
-
-        if (!durationString.isEmpty()) {
-            duration = Double.parseDouble(durationString);
-        }
+        duration = localDuration;
     }
 
     @Override
