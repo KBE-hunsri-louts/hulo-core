@@ -1,23 +1,69 @@
 package com.huloteam.kbe.controller;
 
 import com.huloteam.kbe.application.Application;
+import com.huloteam.kbe.validator.Validator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ApplicationController {
+    private final static String IS_EMPTY_TEXT = "Every parameter must be filled!";
+    private final static String NOT_A_NUMBER = "The zip or house number can only contain numbers!";
+    private final static String NOT_A_STRING = "The street and city name can only contain letters!";
+
     private final Application application = new Application();
 
-    // GET
-    @RequestMapping(value = "/application")
+    // GET product
+    @RequestMapping(value = "/application/product")
     public ResponseEntity<Object> provideOneProduct(@RequestParam(name="genre") String genre,
-                                                    @RequestParam(name="productGenre") String productGenre,
-                                                    @RequestParam(name="vatID") String vatID) {
-        if (!genre.isEmpty() && !productGenre.isEmpty() && !vatID.isEmpty()) {
-            return new ResponseEntity<>(application.getSpecificProduct(genre, productGenre, vatID), HttpStatus.OK);
+                                                    @RequestParam(name="productGenre") String productGenre) {
+        if (!genre.isEmpty() && !productGenre.isEmpty()) {
+            return new ResponseEntity<>(application.getSpecificProduct(genre, productGenre), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Every parameter must be filled!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(IS_EMPTY_TEXT, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // GET location
+    @RequestMapping(value = "/application/location")
+    public ResponseEntity<Object> provideLongitudeLatitude(@RequestParam(name="street") String street,
+                                                           @RequestParam(name="houseNumber") String houseNumber,
+                                                           @RequestParam(name="city") String city,
+                                                           @RequestParam(name="zip") String zip) {
+        if (!street.isEmpty() && !city.isEmpty() && !zip.isEmpty()) {
+            if (Validator.isStringOnlyContainingNumbers(zip) && Validator.isStringContainingNumbers(houseNumber)) {
+                if (!Validator.isStringContainingNumbers(city)) {
+                    return new ResponseEntity<>(application.getNominatimData(street, houseNumber, city, zip), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(NOT_A_STRING, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity<>(NOT_A_NUMBER, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(IS_EMPTY_TEXT, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // GET duration
+    @RequestMapping(value = "/application/duration")
+    public ResponseEntity<Object> provideDuration(@RequestParam(name="street") String street,
+                                                  @RequestParam(name="houseNumber") String houseNumber,
+                                                  @RequestParam(name="city") String city,
+                                                  @RequestParam(name="zip") String zip) {
+        if (!street.isEmpty() && !city.isEmpty() && !zip.isEmpty()) {
+            if (Validator.isStringOnlyContainingNumbers(zip) && Validator.isStringContainingNumbers(houseNumber)) {
+                if (!Validator.isStringContainingNumbers(city)) {
+                    return new ResponseEntity<>(application.getORSMDurationViaLocationInformation(street, houseNumber, city, zip), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(NOT_A_STRING, HttpStatus.BAD_REQUEST);
+                }
+            } else {
+                return new ResponseEntity<>(NOT_A_NUMBER, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(IS_EMPTY_TEXT, HttpStatus.BAD_REQUEST);
         }
     }
 }

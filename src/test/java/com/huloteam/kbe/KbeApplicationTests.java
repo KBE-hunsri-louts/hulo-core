@@ -1,13 +1,11 @@
 package com.huloteam.kbe;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.huloteam.kbe.csv.CSVExporter;
 import com.huloteam.kbe.csv.CSVExporterImpl;
 import com.huloteam.kbe.model.Product;
 import com.huloteam.kbe.odm.MongoDatastore;
 import com.huloteam.kbe.service.*;
+import com.huloteam.kbe.validator.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Class to test methods of several classes.
@@ -60,9 +60,11 @@ class KbeApplicationTests {
 		MONGO_DATASTORE.saveIntoMongo(EASY_AQUA);
 		MONGO_DATASTORE.saveIntoMongo(WWE_360_WPS);
 
-		NOMINATIM_SERVICE.startApi("berlinerstrasse+13", "berlin", "13187");
-		OPEN_STREET_MAP_SERVICE.startApi("berlinerstrasse+13", "berlin", "13187");
+		NOMINATIM_SERVICE.startApi("berlinerstrasse","13", "berlin", "13187");
+		OPEN_STREET_MAP_SERVICE.startApi("berlinerstrasse", "13", "berlin", "13187");
 	}
+
+	// database tests
 
 	@Test
 	@DisplayName("MongoDB put")
@@ -132,6 +134,8 @@ class KbeApplicationTests {
 		assertEquals(2, productList.size());
 	}
 
+	// external API test
+
 	@Test
 	@DisplayName("OpenStreetMapService LonLat")
 	void getLonLatOfOpenStreetMapService() {
@@ -147,6 +151,8 @@ class KbeApplicationTests {
 		// assertEquals("", OPEN_STREET_MAP_SERVICE.getDurationResponse());
 	}
 
+	// internal API tests
+
 	@Test
 	@DisplayName("CalculationService calculatedPrice")
 	void getCalculatedPrice() {
@@ -157,6 +163,45 @@ class KbeApplicationTests {
 	@Test
 	@DisplayName("StorageService productInformation")
 	void getStorageProductInformation() {
+		// Can just be tested if the storage is online.
 		assertEquals(EASY_AQUA.getProvider(), STORAGE_SERVICE.getStorageProductInformation(EASY_AQUA.getProductName()));
+	}
+
+	// Validator test
+
+	@Test
+	@DisplayName("Validator only numbers: 142a is false")
+	void isStringOnlyContainingNumberFalse() {
+		assertFalse(Validator.isStringOnlyContainingNumbers("142a"));
+	}
+
+	@Test
+	@DisplayName("Validator only numbers: 142 is true")
+	void isStringOnlyContainingNumberTrue() {
+		assertTrue(Validator.isStringOnlyContainingNumbers("142"));
+	}
+
+	@Test
+	@DisplayName("Validator number comparator: 13 > 14 is false")
+	void isFirstNumberBiggerFalse() {
+		assertFalse(Validator.isNumberBiggerLowerComparison(13, 14));
+	}
+
+	@Test
+	@DisplayName("Validator number comparator: 14 > 13 is true")
+	void isFirstNumberBiggerTrue() {
+		assertTrue(Validator.isNumberBiggerLowerComparison(14, 13));
+	}
+
+	@Test
+	@DisplayName("Validator string contains numbers: Dudu is false")
+	void isStringContainingNumbersFalse() {
+		assertFalse(Validator.isStringContainingNumbers("Dudu"));
+	}
+
+	@Test
+	@DisplayName("Validator string contains numbers: Du42du is true")
+	void isStringContainingNumbersTrue() {
+		assertTrue(Validator.isStringContainingNumbers("Du42du"));
 	}
 }

@@ -13,7 +13,7 @@ import java.util.List;
 public class Application {
     private final MongoDatastore mongoDatastore = new MongoDatastore(false);
     private final NominatimService nominatimService = new NominatimServiceImpl();
-    private final CalculatorService calculatorService = new CalculatorServiceImpl();
+    private final OpenStreetMapService openStreetMapService = new OpenStreetMapServiceImpl();
     private final StorageService storageService = new StorageServiceImpl();
 
     private Product product;
@@ -22,30 +22,44 @@ public class Application {
      * Provides one product.
      * @param genre is a String which contains a category or genre of a product.
      * @param genreInformation is a String with specific information to the category.
-     * @param vatID is a String which contains tax information.
      * @return one product with all ten attributes.
      */
-    public Product getSpecificProduct(String genre, String genreInformation, String vatID) {
+    public Product getSpecificProduct(String genre, String genreInformation) {
         product = getMongoData(genre, genreInformation);
-        getCalculatorData(vatID);
         // getStoredData(product.getProductName());
 
         return product;
     }
 
     /**
-     * Get one of ten product attributes of the external api Nominatim.
+     * Get latitude and longitude of a location.
+     * @param street is a string which contains a street name
+     * @param houseNumber is a string of a house number
+     * @param city is a string which contains the name of a city
+     * @param zip is a string which only contains numbers
+     * @return a double array with the longitude and latitude of a location
      */
-    public void getNominatimData(String street, String city, String zip) {
-        nominatimService.startApi(street, city, zip);
+    public double[] getNominatimData(String street, String houseNumber, String city, String zip) {
+        nominatimService.startApi(street, houseNumber, city, zip);
 
-        if (product != null) {
-            double[] lonLatCoordinates = new double[2];
-            lonLatCoordinates[0] = nominatimService.getToLon();
-            lonLatCoordinates[1] = nominatimService.getToLat();
+        double[] lonLatCoordinates = new double[2];
+        lonLatCoordinates[0] = nominatimService.getToLon();
+        lonLatCoordinates[1] = nominatimService.getToLat();
 
-            product.setSpecificLocation(lonLatCoordinates);
-        }
+        return lonLatCoordinates;
+    }
+
+    /**
+     * Get duration of a location.
+     * @param street is a string containing letters
+     * @param houseNumber is a string containing letter
+     * @param city is a string containing letters
+     * @param zip is a string containing numbers
+     * @return a double number
+     */
+    public double getORSMDurationViaLocationInformation(String street, String houseNumber, String city, String zip) {
+        openStreetMapService.startApi(street, houseNumber, city, zip);
+        return openStreetMapService.getDuration();
     }
 
     /**
@@ -67,18 +81,6 @@ public class Application {
     }
 
     /**
-     * Get one of ten product attributes from calculator component.
-     * @param vatID is a String which says the component which tax he should use
-     */
-    private void getCalculatorData(String vatID) {
-        double calculatedPrice = calculatorService.getPriceWithTax(
-                vatID,
-                String.valueOf(product.getPriceWithoutTax()));
-
-        product.setPriceWithTax((int) (calculatedPrice * 100));
-    }
-
-    /**
      * Get three of ten product attributes stored in storage component.
      * @param productName is a String and needed to find the right product information
      */
@@ -92,6 +94,5 @@ public class Application {
             product.setStoredSince(LocalDateTime.parse(productInformation.get(2)));
         }
     }
-
      */
 }

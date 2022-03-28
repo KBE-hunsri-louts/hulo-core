@@ -34,5 +34,14 @@ public class Validator {
     public static boolean isObjectNotNull(Object object) {
         return object != null;
     }
+
+    /**
+     * Checks if a string contains numbers.
+     * @param text is a string
+     * @return true if the string contains a number, false if not
+     */
+    public static boolean isStringContainingNumbers(String text) {
+        return text.matches(".*\\d.*");
+    }
 }
 

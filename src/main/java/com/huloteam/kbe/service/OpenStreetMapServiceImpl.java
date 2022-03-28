@@ -23,9 +23,9 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
      * Is the entry point to access our service.
      */
     @Override
-    public void startApi(String street, String city, String zip) {
+    public void startApi(String street, String houseNumber, String city, String zip) {
         NominatimServiceImpl nominatimServiceImpl = new NominatimServiceImpl();
-        nominatimServiceImpl.startApi(street, city, zip);
+        nominatimServiceImpl.startApi(street, houseNumber, city, zip);
 
         String durationUrlString = "http://router.project-osrm.org/trip/v1/driving/"
                 + homeLat + ","
