@@ -24,9 +24,10 @@ public class NominatimServiceImpl implements NominatimService {
      * Is the entry point to access our service.
      */
     @Override
-    public void startApi(String street, String city, String zip) {
+    public void startApi(String street,String houseNumber, String city, String zip) {
         String lonLatUrlString = "https://nominatim.openstreetmap.org/search?format=json"
                 + "&street=" + street
+                + "+" + houseNumber
                 + "&city=" + city
                 + "&postalcode=" + zip;
 
