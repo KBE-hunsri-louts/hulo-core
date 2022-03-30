@@ -29,7 +29,7 @@ public class ApplicationController {
     }
 
     // POST product
-    @PostMapping(value = "application/product")
+    @PostMapping(value = "/application/product")
     public ResponseEntity<Object> postProduct(@RequestBody Product product) {
         if (Validator.isObjectNotNull(product.getProductName())) {
             application.registerProduct(product);

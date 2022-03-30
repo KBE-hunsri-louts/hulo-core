@@ -30,7 +30,12 @@ public class Application {
      */
     public Product getSpecificProduct(String genre, String genreInformation) {
         product = getMongoData(genre, genreInformation);
-        // getStoredData(product.getProductName());
+
+        /*
+        if (Validator.isObjectNotNull(product.getProductName())) {
+            getStoredData(product.getProductName());
+        }
+         */
 
         return product;
     }
@@ -101,15 +106,13 @@ public class Application {
      * Get three of ten product attributes stored in storage component.
      * @param productName is a String and needed to find the right product information
      */
-    /*
     private void getStoredData(String productName) {
-        List<String> productInformation = storageService.getStorageProductInformation(productName);
+        Object[] productInformation = storageService.getStorageProductInformation(productName);
 
         if (productInformation != null) {
-            product.setProvider(productInformation.get(0));
-            product.setProviderPrice(Integer.parseInt(productInformation.get(1)));
-            product.setStoredSince(LocalDateTime.parse(productInformation.get(2)));
+            product.setProvider(productInformation[0].toString());
+            product.setProviderPrice(Integer.parseInt(productInformation[1].toString()));
+            product.setStoredSince(LocalDateTime.parse(productInformation[2].toString()));
         }
     }
-     */
 }

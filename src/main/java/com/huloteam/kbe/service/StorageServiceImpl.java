@@ -1,6 +1,8 @@
 package com.huloteam.kbe.service;
 
 import com.huloteam.kbe.validator.Validator;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,18 +15,23 @@ import java.util.List;
 public class StorageServiceImpl implements StorageService {
 
     @Override
-    public String getStorageProductInformation(String productName) {
-        String storageUrlString = "http://localhost:8080/storage" +
-                "?productName=" + productName;
+    public Object[] getStorageProductInformation(String productName) {
+        try {
+            String storageUrlString = "http://localhost:8080/storage" +
+                    "?productName=" + productName;
 
-        return openConnection(storageUrlString);
+            return getSpecificJsonInformation(getResponse(openConnection(storageUrlString)));
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
+        }
     }
 
     /**
      * Creates the url and starts the connection to the API.
      * @param urlString is a String which contains a URL.
      */
-    private String openConnection(String urlString) {
+    private HttpURLConnection openConnection(String urlString) {
         HttpURLConnection connection = null;
 
         try {
@@ -32,7 +39,7 @@ public class StorageServiceImpl implements StorageService {
             connection = (HttpURLConnection) distanceUrl.openConnection();
             connection.setRequestMethod("GET");
 
-            return getResponse(connection);
+            return connection;
         } catch (Exception exception) {
             exception.printStackTrace();
             return null;
@@ -43,7 +50,16 @@ public class StorageServiceImpl implements StorageService {
         }
     }
 
-    private String getResponse(HttpURLConnection connection) throws IOException {
+    /**
+     * Uses the given connection to read the response of the API.
+     * https://github.com/eugenp/tutorials/blob/master/core-java-modules/core-java-networking-2/src/main/java/com/baeldung/httprequest/FullResponseBuilder.java
+     * @param connection is a HttpURLConnection and contains information of Storage API.
+     * @return a String with information of the connection.
+     * @throws IOException might be thrown while using Streams.
+     */
+    private StringBuilder getResponse(HttpURLConnection connection) throws IOException {
+        StringBuilder fullResponseBuilder = new StringBuilder();
+        // read response content
         Reader streamReader = null;
 
         if (Validator.isNumberBiggerLowerComparison(connection.getResponseCode(), 299)) {
@@ -61,6 +77,27 @@ public class StorageServiceImpl implements StorageService {
         }
 
         bufferedReader.close();
-        return connection.toString();
+
+        fullResponseBuilder.append(content);
+        return fullResponseBuilder;
+    }
+
+    /**
+     * Reads valuable information out of a StringBuilder.
+     * @param content is a StringBuilder which contains JSON data.
+     */
+    private Object[] getSpecificJsonInformation(StringBuilder content) {
+        if (Validator.isObjectNotNull(content)) {
+            Object[] returnObject = new Object[3];
+            JSONArray jsonArray = new JSONArray(content.toString());
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                returnObject[i] = jsonArray.get(i);
+            }
+
+            return returnObject;
+        } else {
+            return null;
+        }
     }
 }
