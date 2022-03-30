@@ -16,6 +16,8 @@ import java.net.URL;
 public class OpenStreetMapServiceImpl implements OpenStreetMapService {
     private String response;
     private static double duration;
+
+    // Home address
     private final double homeLat = 52.5359076;
     private final double homeLon = 13.6528199;
 
@@ -110,12 +112,13 @@ public class OpenStreetMapServiceImpl implements OpenStreetMapService {
             localDuration = array.getJSONObject(i).getDouble(searchInformation);
         }
 
+        // duration in seconds
         duration = localDuration;
     }
 
     @Override
     public double getDuration() {
-        return (duration / 1000) / 60;
+        return duration;
     }
 
     @Override
