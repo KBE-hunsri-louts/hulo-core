@@ -8,5 +8,5 @@ public interface StorageService {
      * @param productName is a string which is needed to get the right information
      * @return a list of product information
      */
-    String getStorageProductInformation(String productName);
+    Object[] getStorageProductInformation(String productName);
 }
