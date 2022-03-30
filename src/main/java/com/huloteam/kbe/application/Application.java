@@ -1,8 +1,11 @@
 package com.huloteam.kbe.application;
 
+import com.huloteam.kbe.csv.CSVExporter;
+import com.huloteam.kbe.csv.CSVExporterImpl;
 import com.huloteam.kbe.model.Product;
 import com.huloteam.kbe.odm.MongoDatastore;
 import com.huloteam.kbe.service.*;
+import com.huloteam.kbe.validator.Validator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +18,7 @@ public class Application {
     private final NominatimService nominatimService = new NominatimServiceImpl();
     private final OpenStreetMapService openStreetMapService = new OpenStreetMapServiceImpl();
     private final StorageService storageService = new StorageServiceImpl();
+    private final CSVExporter csvExporter = new CSVExporterImpl();
 
     private Product product;
 
@@ -29,6 +33,19 @@ public class Application {
         // getStoredData(product.getProductName());
 
         return product;
+    }
+
+    /**
+     * Saves a new product into Mongo Database and sends three product information to storage component.
+     * @param product is a model of application
+     */
+    public void registerProduct(Product product) {
+        if (!Validator.isObjectNotNull(product.getStoredSince())) {
+            product.setStoredSince(LocalDateTime.now());
+        }
+
+        mongoDatastore.saveIntoMongo(product);
+        csvExporter.createCSV(product);
     }
 
     /**
