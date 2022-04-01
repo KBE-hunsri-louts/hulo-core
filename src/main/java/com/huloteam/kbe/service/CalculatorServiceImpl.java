@@ -12,10 +12,11 @@ import java.net.URL;
 
 @Service
 public class CalculatorServiceImpl implements CalculatorService {
+    private final static int PORT = 8001;
 
     @Override
     public double getPriceWithTax(String vatID, String price) {
-        String calculatorUrlString = "http://localhost:8080/calculator" +
+        String calculatorUrlString = "http://localhost:" + PORT + "/calculator" +
                 "?vatID=" + vatID +
                 "&price=" + price;
 

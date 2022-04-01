@@ -13,11 +13,12 @@ import java.net.URL;
 import java.util.List;
 
 public class StorageServiceImpl implements StorageService {
+    private final static int PORT = 8300;
 
     @Override
     public Object[] getStorageProductInformation(String productName) {
         try {
-            String storageUrlString = "http://localhost:8080/storage" +
+            String storageUrlString = "http://localhost:" + PORT + "/storage" +
                     "?productName=" + productName;
 
             return getSpecificJsonInformation(getResponse(openConnection(storageUrlString)));
